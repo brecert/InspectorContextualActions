@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>InspectorContextualActions</RootNamespace>
+		<AssemblyName>InspectorContextualActions</AssemblyName>
+		<AssemblyTitle>InspectorContextualActions</AssemblyTitle>
+		<Description>Addtional contextual inspector actions.</Description>
+		<Authors>bree</Authors>
+		<RepositoryUrl>https://github.com/brecert/InspectorContextualActions</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>Resonite,Mod,ResoniteModLoader,Inspecotr,Replace</PackageTags>
+		<Version>0.0.1.0</Version>
+		<PackageReadmeFile>../README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Product>$(AssemblyTitle)</Product>
+		<Copyright>Copyright (c) 2025 $(Authors)</Copyright>
+		<PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<DelaySign>False</DelaySign>
+		<Title>Inspector Contextual Actions</Title>
+	</PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <ResoniteProjectType>mod</ResoniteProjectType>
+    <ResoniteTarget>client</ResoniteTarget>
+    <ResoniteInstallOnBuild>true</ResoniteInstallOnBuild>
+    <ResonitePath>D:\Program Files (x86)\Steam\steamapps\common\Resonite\</ResonitePath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ResoniteReference Include="FrooxEngine" />
+    <ResoniteReference Include="Elements.Core" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ResoniteAssemblyPath>$(ResonitePath)/Resonite_Data/Managed</ResoniteAssemblyPath>
+    <ReferencePath>$(ResoniteAssemblyPath);$(ReferencePath)</ReferencePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="@(ResoniteReference)">
+      <Name>%(ResoniteReference.Identity)</Name>
+      <HintPath Condition="'%(HintPath)' == '' And Exists('$(ResoniteAssemblyPath)/%(Identity).dll')">$(ResoniteAssemblyPath)/%(Identity).dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ResoniteModLoader">
+      <HintPath>$(ResonitePath)Libraries\ResoniteModLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="HarmonyLib">
+      <HintPath>$(ResonitePath)rml_libs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="ResoniteHotReloadLib" Condition="'$(Configuration)'=='Debug'">
+      <HintPath>$(ResonitePath)rml_libs\ResoniteHotReloadLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(ResoniteInstallOnBuild)'=='true'">
+    <Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_mods" Importance="high" />
+    <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ResonitePath)rml_mods" ContinueOnError="true" />
+  </Target>
+  
+  <Target Name="PostBuildHotReload" AfterTargets="PostBuildEvent" Condition="'$(ResoniteInstallOnBuild)'=='true' and '$(Configuration)'=='Debug'">
+    <Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_mods\HotReloadMods" Importance="high" />
+    <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ResonitePath)rml_mods\HotReloadMods" ContinueOnError="true" />
+  </Target>
+
+</Project>
