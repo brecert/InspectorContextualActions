@@ -42,21 +42,23 @@ public class InspectorContextualActionsMod : ResoniteMod
     HotReloader.RegisterForHotReload(this);
 #endif
 
-    Config = GetConfiguration()!;
-    Config.OnThisConfigurationChanged += OnConfigChanged;
+    // Config = GetConfiguration()!;
+    // Config.OnThisConfigurationChanged += OnConfigChanged;
 
     PatchCategories();
+    harmony.PatchAllUncategorized(ModAssembly);
   }
 
 #if DEBUG
   static void BeforeHotReload()
   {
-    UnpatchCategories();
+    harmony.UnpatchAll(HarmonyId);
   }
 
   static void OnHotReload(ResoniteMod modInstance)
   {
     PatchCategories();
+    harmony.PatchAllUncategorized(ModAssembly);
   }
 #endif
 
