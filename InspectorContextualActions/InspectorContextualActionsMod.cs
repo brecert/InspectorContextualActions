@@ -53,7 +53,7 @@ public class InspectorContextualActionsMod : ResoniteMod
   static void BeforeHotReload()
   {
     harmony.UnpatchAll(HarmonyId);
-    ReferenceDriveReceiverActionsPatch.SeenTypes.Clear();
+    ComponentSubtypePatches.SeenTypes.Clear();
   }
 
   static void OnHotReload(ResoniteMod modInstance)
