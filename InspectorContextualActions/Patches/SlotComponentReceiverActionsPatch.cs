@@ -14,6 +14,8 @@ class SlotComponentReceiverActionsPatch
   [HarmonyPatch(typeof(SlotComponentReceiver), nameof(SlotComponentReceiver.TryReceive))]
   static void TryReceiveActions(SlotComponentReceiver __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, bool __result)
   {
+    var slot = __instance.Target.Target;
+    if (slot == null) return;
     foreach (var reference in GrabbableHelper.GetGrabbedReferences(items))
     {
       if (reference is ISyncRef<IAssetProvider<ITexture2D>> itex2d)
@@ -36,7 +38,6 @@ class SlotComponentReceiverActionsPatch
             var item = menu.AddItem($"Create {type.GetNiceName()}", (Uri)null, RadiantUI_Constants.Hero.CYAN);
             item.Button.LocalPressed += (_, _) =>
             {
-              var slot = reference.FindNearestParent<Slot>();
               var tex = (ITexture2DProvider)slot.AttachComponent(type);
               itex2d.Target = tex;
               __instance.LocalUser.CloseContextMenu(__instance);
@@ -55,7 +56,6 @@ class SlotComponentReceiverActionsPatch
           var item = menu.AddItem("Create RenderTextureProvider", (Uri)null, RadiantUI_Constants.Hero.CYAN);
           item.Button.LocalPressed += (_, _) =>
           {
-            var slot = reference.FindNearestParent<Slot>();
             var rtp = slot.AttachComponent<RenderTextureProvider>();
             rtpRef.Target = rtp;
             __instance.LocalUser.CloseContextMenu(__instance);
@@ -73,7 +73,7 @@ class SlotComponentReceiverActionsPatch
           var item = menu.AddItem("Create Dynamic Reference", (Uri)null, RadiantUI_Constants.Hero.CYAN);
           item.Button.LocalPressed += (_, _) =>
           {
-            CreateDynamicReference(syncRef);
+            CreateDynamicReference(slot, syncRef);
             __instance.LocalUser.CloseContextMenu(__instance);
           };
         });
@@ -90,7 +90,7 @@ class SlotComponentReceiverActionsPatch
           var item = menu.AddItem("Create Dynamic Field", (Uri)null, RadiantUI_Constants.Hero.CYAN);
           item.Button.LocalPressed += (_, _) =>
           {
-            CreateDynamicField(field);
+            CreateDynamicField(slot, field);
             __instance.LocalUser.CloseContextMenu(__instance);
           };
         });
@@ -100,16 +100,14 @@ class SlotComponentReceiverActionsPatch
     }
   }
 
-  static void CreateDynamicReference(ISyncRef syncRef)
+  static void CreateDynamicReference(Slot slot, ISyncRef syncRef)
   {
-    var slot = syncRef.FindNearestParent<Slot>();
     var driver = (IDynamicVariable)slot.AttachComponent(typeof(DynamicReference<>).MakeGenericType(syncRef.TargetType));
     Traverse.Create(driver).Field("TargetReference").Property("Target").SetValue(syncRef);
   }
 
-  static void CreateDynamicField(IField field)
+  static void CreateDynamicField(Slot slot, IField field)
   {
-    var slot = field.FindNearestParent<Slot>();
     var driver = (IDynamicVariable)slot.AttachComponent(typeof(DynamicField<>).MakeGenericType(field.ValueType));
     Traverse.Create(driver).Field("TargetField").Property("Target").SetValue(field);
   }

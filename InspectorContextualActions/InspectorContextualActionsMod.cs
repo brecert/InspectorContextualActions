@@ -21,10 +21,10 @@ public class InspectorContextualActionsMod : ResoniteMod
   public override string Version => ModAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
   public override string Link => ModAssembly.GetCustomAttributes<AssemblyMetadataAttribute>().First(meta => meta.Key == "RepositoryUrl").Value;
 
-  private static string HarmonyId => $"dev.bree.{ModAssembly.GetName()}";
-  private static readonly Harmony harmony = new(HarmonyId);
+  internal static string HarmonyId => $"dev.bree.{ModAssembly.GetName()}";
+  internal static readonly Harmony harmony = new(HarmonyId);
 
-  private static ModConfiguration? Config;
+  internal static ModConfiguration? Config;
 
   private static HashSet<string> Categories = [];
 
@@ -53,6 +53,7 @@ public class InspectorContextualActionsMod : ResoniteMod
   static void BeforeHotReload()
   {
     harmony.UnpatchAll(HarmonyId);
+    ReferenceDriveReceiverActionsPatch.SeenTypes.Clear();
   }
 
   static void OnHotReload(ResoniteMod modInstance)
