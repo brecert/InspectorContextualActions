@@ -16,6 +16,35 @@ class SlotComponentReceiverActionsPatch
   {
     foreach (var reference in GrabbableHelper.GetGrabbedReferences(items))
     {
+      if (reference is ISyncRef<IAssetProvider<ITexture2D>> itex2d)
+      {
+        __instance.StartTask(async () =>
+        {
+          var menu = await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+          await new Updates(0); // I don't know why this is needed...
+
+          Type[] types = [
+            typeof(GridTexture),
+            typeof(NoiseTexture),
+            typeof(SimplexTexture),
+            typeof(SolidColorTexture),
+            typeof(UVTexture),
+          ];
+
+          foreach (var type in types)
+          {
+            var item = menu.AddItem($"Create {type.GetNiceName()}", (Uri)null, RadiantUI_Constants.Hero.CYAN);
+            item.Button.LocalPressed += (_, _) =>
+            {
+              var slot = reference.FindNearestParent<Slot>();
+              var tex = (ITexture2DProvider)slot.AttachComponent(type);
+              itex2d.Target = tex;
+              __instance.LocalUser.CloseContextMenu(__instance);
+            };
+          }
+        });
+      }
+
       if (reference is ISyncRef<IAssetProvider<RenderTexture>> rtpRef)
       {
         __instance.StartTask(async () =>

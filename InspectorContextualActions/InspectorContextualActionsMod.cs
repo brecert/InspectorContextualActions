@@ -28,7 +28,7 @@ public class InspectorContextualActionsMod : ResoniteMod
 
   private static HashSet<string> Categories = [];
 
-  InspectorContextualActionsMod()
+  public InspectorContextualActionsMod()
   {
     Categories = AccessTools.GetTypesFromAssembly(ModAssembly)
       .Select(t => t.GetCustomAttribute<HarmonyPatchCategory>()?.info.category)
