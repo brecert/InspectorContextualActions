@@ -62,10 +62,26 @@ class FieldDriveReceiverActionsPatch
       if (field.IsDrivable && varType.IsAssignableFrom(field.ValueType))
       {
         yield return new MenuItem(
-          label: "Inspector.Fields.Drive".AsLocaleKey(format: $"{{0}} <size=50%>(DynamicValueVariableDriver)</size>"),
+          label: DriveLabel("DynamicValueVariableDriver"),
           icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
           color: RadiantUI_Constants.Hero.PURPLE,
           action: () => slot.CreateValueDriver(varType, dynVar.VariableName, field)
+        );
+      }
+    }
+
+    // element: source
+    // field: target
+    if (element is IField source)
+    {
+      var target = field;
+      if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
+      {
+        yield return new MenuItem(
+          label: DriveLabel(driverType!),
+          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () => slot.CreateConvertibleDriver(driverType!, source, target)
         );
       }
     }
@@ -74,4 +90,7 @@ class FieldDriveReceiverActionsPatch
     {
     }
   }
+
+  private static LocaleString DriveLabel(string name) => "Inspector.Fields.Drive".AsLocaleKey($"{{0}} <size=50%>({name})</size>");
+  private static LocaleString DriveLabel(Type type) => DriveLabel(type.GetNiceName());
 }
