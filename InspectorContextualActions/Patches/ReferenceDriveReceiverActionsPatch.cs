@@ -9,6 +9,7 @@ using InspectorContextualActions.Utils;
 class ReferenceDriveReceiverActionsPatch
 {
   // Patched from ComponentSubtypePatches
+  [HarmonyPostfix]
   public static void TryReceive_Postfix(object __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, bool __result)
   {
     var component = (Component)__instance;
