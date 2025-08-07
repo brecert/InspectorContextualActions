@@ -38,7 +38,7 @@ class FieldDriveReceiverActionsPatch
             );
             item.Button.LocalPressed += (_, _) =>
             {
-              slot.CreateValueDriver(varType, null, field);
+              slot.CreateValueDriver(varType, dynVar.VariableName, field);
               component.LocalUser.CloseContextMenu(component);
             };
           });

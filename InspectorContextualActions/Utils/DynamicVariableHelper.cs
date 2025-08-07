@@ -55,12 +55,4 @@ public static class DynamicVariableHelper
 
     return false;
   }
-
-  public static Type GetDynamicVariableDriverType(Type type) =>
-    type.IsEnginePrimitive()
-      ? typeof(DynamicValueVariableDriver<>).MakeGenericType(type)
-      : typeof(DynamicReferenceVariableDriver<>).MakeGenericType(type);
-
-  public static void SetDynamicVariableName(IDynamicVariable dynVar, string name) =>
-    Traverse.Create(dynVar).Field<Sync<string>>("VariableName").Value.Value = name;
 }

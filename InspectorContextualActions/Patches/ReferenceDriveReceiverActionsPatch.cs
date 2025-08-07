@@ -38,7 +38,7 @@ class ReferenceDriveReceiverActionsPatch
             );
             item.Button.LocalPressed += (_, _) =>
             {
-              slot.CreateReferenceDriver(varType, null, syncRef);
+              slot.CreateReferenceDriver(varType, dynVar.VariableName, syncRef);
               component.LocalUser.CloseContextMenu(component);
             };
           });
