@@ -24,7 +24,7 @@ class ReferenceDriveReceiverActionsPatch
         var dynVar = (IDynamicVariable)reference;
         var varType = matchedType!.GenericTypeArguments[0];
 
-        if (varType.IsAssignableFrom(syncRef.TargetType))
+        if (syncRef.IsDrivable && varType.IsAssignableFrom(syncRef.TargetType))
         {
           component.StartTask(async () =>
           {
