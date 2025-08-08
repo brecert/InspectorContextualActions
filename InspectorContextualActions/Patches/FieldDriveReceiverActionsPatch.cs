@@ -73,7 +73,7 @@ class FieldDriveReceiverActionsPatch
 
     // element: source
     // field: target
-    if (element is IField source)
+    if (element is IField source && field.IsDrivable)
     {
       var target = field;
       if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
