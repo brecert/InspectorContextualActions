@@ -53,6 +53,7 @@ class FieldDriveReceiverActionsPatch
   static IEnumerable<MenuItem> MenuItems(IField field, IWorldElement element)
   {
     var slot = field.FindNearestParent<Slot>();
+    var typeManager = element.World.Types;
 
     if (TypeUtils.MatchInterface(element.GetType(), typeof(IDynamicVariable<>), out var matchedType))
     {
@@ -82,6 +83,16 @@ class FieldDriveReceiverActionsPatch
           icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
           color: RadiantUI_Constants.Hero.PURPLE,
           action: () => slot.CreateConvertibleDriver(driverType!, source, target)
+        );
+      }
+
+      if (typeManager.TryGetSwizzleDriverType(source, target, out var swizzleDriverType))
+      {
+        yield return new MenuItem(
+          label: DriveLabel(swizzleDriverType!),
+          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () => slot.CreateSwizzleDriver(swizzleDriverType!, source, target)
         );
       }
     }
