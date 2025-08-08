@@ -20,9 +20,8 @@ class ReferenceDriveReceiverActionsPatch
 
   // Patched from ComponentSubtypePatches
   [HarmonyPostfix]
-  public static void TryReceive_Postfix(object __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, bool __result)
+  public static void TryReceive_Postfix(Component __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, bool __result)
   {
-    var component = (Component)__instance;
     var fieldRef = (ISyncRef)Traverse.Create(__instance).Field("Reference").GetValue();
     var syncRef = (ISyncRef)fieldRef.Target;
 
@@ -30,9 +29,9 @@ class ReferenceDriveReceiverActionsPatch
 
     if (menuItems.Length > 0)
     {
-      component.StartTask(async () =>
+      __instance.StartTask(async () =>
       {
-        var menu = await component.LocalUser.OpenContextMenu(component, eventData.source.Slot);
+        var menu = await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
         await new Updates(0); // I don't know why this is needed...
 
         foreach (var item in menuItems)
