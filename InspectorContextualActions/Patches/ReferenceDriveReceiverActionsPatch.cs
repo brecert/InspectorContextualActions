@@ -69,8 +69,6 @@ class ReferenceDriveReceiverActionsPatch
       }
     }
 
-    UniLog.Log(element.GetType());
-    UniLog.Log(syncRef.GetType());
     if (element is ISyncRef source && syncRef.IsDrivable)
     {
       var target = syncRef;
