@@ -58,7 +58,6 @@ class SlotComponentReceiverActionsPatch
 
   static IEnumerable<MenuItem> MenuItems(Slot slot, IWorldElement? element)
   {
-
     switch (element)
     {
       case ISyncRef<IAssetProvider<ITexture2D>> itex2d:
@@ -79,6 +78,40 @@ class SlotComponentReceiverActionsPatch
         );
         break;
     }
+
+    // create field if the ref wants a field
+    {
+      if (element is ISyncRef syncRef)
+      {
+        if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(IField<>), out var matchedFieldType))
+        {
+          var valueType = matchedFieldType!.GenericTypeArguments[0];
+          yield return new MenuItem(
+            label: CreateLabel("ValueField"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () =>
+            {
+              var field = slot.AttachComponent(typeof(ValueField<>).MakeGenericType(valueType));
+              syncRef.Target = Traverse.Create(field).Field("Value").GetValue<IWorldElement>();
+            }
+          );
+        }
+        else if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(ISyncRef<>), out var matchedSyncRefType))
+        {
+          var refType = matchedFieldType!.GenericTypeArguments[0];
+          yield return new MenuItem(
+            label: CreateLabel("ValueField"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () =>
+            {
+              var field = slot.AttachComponent(typeof(ReferenceField<>).MakeGenericType(refType));
+              syncRef.Target = Traverse.Create(field).Field("Reference").GetValue<IWorldElement>();
+            }
+          );
+        }
+      }
+    }
+
 
     switch (element)
     {
