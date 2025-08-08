@@ -41,7 +41,7 @@ class ReferenceDriveReceiverActionsPatch
           contextMenuItem.Button.LocalPressed += (_, _) =>
           {
             item.Action();
-            component.LocalUser.CloseContextMenu(component);
+            menu.Close();
           };
         }
       });

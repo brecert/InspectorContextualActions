@@ -42,7 +42,7 @@ class FieldDriveReceiverActionsPatch
           contextMenuItem.Button.LocalPressed += (_, _) =>
           {
             item.Action();
-            component.LocalUser.CloseContextMenu(component);
+            menu.Close();
           };
         }
       });

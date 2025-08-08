@@ -40,7 +40,7 @@ class SlotComponentReceiverActionsPatch
           contextMenuItem.Button.LocalPressed += (_, _) =>
           {
             item.Action();
-            __instance.LocalUser.CloseContextMenu(__instance);
+            menu.Close();
           };
         }
       });
