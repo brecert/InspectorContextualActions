@@ -21,7 +21,7 @@ class FieldDriveReceiverActionsPatch
 
   // Patched from ComponentSubtypePatches
   [HarmonyPostfix]
-  public static void TryReceive_Postfix(Component __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, bool __result)
+  public static void TryReceive_Postfix(Component __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, ref bool __result)
   {
     var fieldRef = (ISyncRef)Traverse.Create(__instance).Field("Field").GetValue();
     var field = (IField)fieldRef.Target;
