@@ -10,8 +10,8 @@ using HarmonyLib;
 using InspectorContextualActions.Utils;
 
 [HarmonyPatch]
-[HarmonyPatchCategory("ComponentSelectorTypeReceiver")]
-class ComponentSelectorTypeReceiver
+[HarmonyPatchCategory("ComponentSelectorTypeReceiverPatch")]
+class ComponentSelectorTypeReceiverPatch
 {
   internal class TextFieldData(ComponentSelector componentSelector, Type? typeArgument)
   {
