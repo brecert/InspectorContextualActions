@@ -9,16 +9,13 @@ namespace InspectorContextualActions.Utils;
 
 public static class ReferenceCastHelper
 {
-  public static bool TryGetReferenceCastType(ISyncRef source, ISyncRef target, out Type? type)
+  public static bool CanCastDrive(ISyncRef source, ISyncRef target)
   {
-    // TODO: make leniency configurable
-    if (source.TargetType != target.TargetType && target.TargetType.IsAssignableFrom(source.TargetType) || source.TargetType.IsAssignableFrom(target.TargetType))
-    {
-      type = typeof(ReferenceCast<,>).MakeGenericType(source.TargetType, target.TargetType);
-      return true;
-    }
-    type = null;
-    return false;
+    return source.TargetType != target.TargetType && (
+      target.TargetType.IsAssignableFrom(source.TargetType)
+      || source.TargetType.IsAssignableFrom(target.TargetType)
+      || CanConvertTo(source, target)
+    );
   }
 
   public static void CreateReferenceCast(ISyncRef source, ISyncRef target, bool writeBack = false, bool keepOriginalValue = false, bool searchForDuplicate = true)
@@ -28,4 +25,9 @@ public static class ReferenceCastHelper
     typeof(ReferenceCopyExtensions).GetGenericMethod("CastDriveFrom", BindingFlags.Static | BindingFlags.Public, [I, O])
       .Invoke(null, [target, source, writeBack, keepOriginalValue, searchForDuplicate]);
   }
+
+  static bool CanConvertTo(this ISyncRef source, ISyncRef target) =>
+    (bool)typeof(ReferenceCastHelper).GetMethod(nameof(CanConvertTo)).MakeGenericMethod(source.TargetType, target.TargetType).Invoke(null, [source.Target]);
+
+  static bool CanConvertTo<I, O>(I input) => input is O;
 }

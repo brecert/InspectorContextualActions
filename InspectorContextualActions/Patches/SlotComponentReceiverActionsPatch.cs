@@ -31,8 +31,11 @@ class SlotComponentReceiverActionsPatch
     {
       __instance.StartTask(async () =>
       {
-        var menu = await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
-        await new Updates(0); // I don't know why this is needed...
+        var menu = __instance.LocalUser.IsContextMenuOpen()
+          ? __instance.LocalUser.GetUserContextMenu()
+          : await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+
+        // await new Updates(0); // I don't know why this is needed...
 
         foreach (var item in menuItems)
         {

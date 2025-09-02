@@ -20,7 +20,7 @@ class FieldDriveReceiverActionsPatch
 
 
   // Patched from ComponentSubtypePatches
-  [HarmonyPostfix]
+  // [HarmonyPostfix]
   public static void TryReceive_Postfix(Component __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, ref bool __result)
   {
     var fieldRef = (ISyncRef)Traverse.Create(__instance).Field("Field").GetValue();
@@ -32,7 +32,10 @@ class FieldDriveReceiverActionsPatch
     {
       __instance.StartTask(async () =>
       {
-        var menu = await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+        var menu = __instance.LocalUser.IsContextMenuOpen()
+          ? __instance.LocalUser.GetUserContextMenu()
+          : await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+
         await new Updates(0); // I don't know why this is needed...
 
         foreach (var item in menuItems)
@@ -45,18 +48,22 @@ class FieldDriveReceiverActionsPatch
           };
         }
       });
+
       __result = true;
+      return;
     }
+
+    __result = false;
   }
 
-  static IEnumerable<MenuItem> MenuItems(IField field, IWorldElement element)
+  static IEnumerable<MenuItem> MenuItems(IField field, IWorldElement grabbedReference)
   {
     var slot = field.FindNearestParent<Slot>();
-    var typeManager = element.World.Types;
+    var typeManager = grabbedReference.World.Types;
 
-    if (TypeUtils.MatchInterface(element.GetType(), typeof(IDynamicVariable<>), out var matchedType))
+    if (TypeUtils.MatchInterface(grabbedReference.GetType(), typeof(IDynamicVariable<>), out var matchedType))
     {
-      var dynVar = (IDynamicVariable)element;
+      var dynVar = (IDynamicVariable)grabbedReference;
       var varType = matchedType!.GenericTypeArguments[0];
 
       if (field.IsDrivable && varType.IsAssignableFrom(field.ValueType))
@@ -72,7 +79,7 @@ class FieldDriveReceiverActionsPatch
 
     // element: source
     // field: target
-    if (element is IField source && field.IsDrivable)
+    if (grabbedReference is IField source && field.IsDrivable)
     {
       var target = field;
       if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
@@ -96,7 +103,7 @@ class FieldDriveReceiverActionsPatch
       }
     }
 
-    switch (element)
+    switch (grabbedReference)
     {
     }
   }

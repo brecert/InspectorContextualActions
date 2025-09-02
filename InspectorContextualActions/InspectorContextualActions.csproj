@@ -9,7 +9,7 @@
 		<RepositoryUrl>https://github.com/brecert/InspectorContextualActions</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>Resonite,Mod,ResoniteModLoader,Inspecotr,Replace</PackageTags>
-		<Version>0.0.1.0</Version>
+		<Version>0.0.2.0</Version>
 		<PackageReadmeFile>../README.md</PackageReadmeFile>
 	</PropertyGroup>
 
@@ -28,7 +28,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net9</TargetFramework>
     <ResoniteProjectType>mod</ResoniteProjectType>
     <ResoniteTarget>client</ResoniteTarget>
     <ResoniteInstallOnBuild>true</ResoniteInstallOnBuild>
@@ -47,7 +47,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ResoniteAssemblyPath>$(ResonitePath)/Resonite_Data/Managed</ResoniteAssemblyPath>
+    <ResoniteAssemblyPath>$(ResonitePath)</ResoniteAssemblyPath>
     <ReferencePath>$(ResoniteAssemblyPath);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
 
@@ -71,10 +71,10 @@
     </Reference>
   </ItemGroup>
   
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(ResoniteInstallOnBuild)'=='true'">
+  <!-- <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(ResoniteInstallOnBuild)'=='true'">
     <Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_mods" Importance="high" />
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ResonitePath)rml_mods" ContinueOnError="true" />
-  </Target>
+  </Target> -->
   
   <Target Name="PostBuildHotReload" AfterTargets="PostBuildEvent" Condition="'$(ResoniteInstallOnBuild)'=='true' and '$(Configuration)'=='Debug'">
     <Message Text="Attempting to copy $(TargetFileName) to $(ResonitePath)rml_mods\HotReloadMods" Importance="high" />

@@ -31,7 +31,10 @@ class ReferenceDriveReceiverActionsPatch
     {
       __instance.StartTask(async () =>
       {
-        var menu = await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+        var menu = __instance.LocalUser.IsContextMenuOpen()
+          ? __instance.LocalUser.GetUserContextMenu()
+          : await __instance.LocalUser.OpenContextMenu(__instance, eventData.source.Slot);
+
         await new Updates(0); // I don't know why this is needed...
 
         foreach (var item in menuItems)
@@ -72,7 +75,7 @@ class ReferenceDriveReceiverActionsPatch
     {
       var target = syncRef;
 
-      if (ReferenceCastHelper.TryGetReferenceCastType(source, target, out var _castType))
+      if (ReferenceCastHelper.CanCastDrive(source, target))
       {
         yield return new MenuItem(
           label: DriveLabel("ReferenceCast"),
