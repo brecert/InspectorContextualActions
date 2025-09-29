@@ -66,7 +66,7 @@ class ReferenceDriveReceiverActionsPatch
           label: "Inspector.Fields.Drive".AsLocaleKey(format: $"{{0}} <size=50%>(DynamicReferenceVariableDriver)</size>"),
           icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
           color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => slot.CreateReferenceDriver(varType, dynVar.VariableName, syncRef)
+          action: () => slot.CreateDynamicReferenceDriver(varType, dynVar.VariableName, syncRef)
         );
       }
     }

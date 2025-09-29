@@ -61,45 +61,65 @@ class FieldDriveReceiverActionsPatch
     var slot = field.FindNearestParent<Slot>();
     var typeManager = grabbedReference.World.Types;
 
-    if (TypeUtils.MatchInterface(grabbedReference.GetType(), typeof(IDynamicVariable<>), out var matchedType))
     {
-      var dynVar = (IDynamicVariable)grabbedReference;
-      var varType = matchedType!.GenericTypeArguments[0];
-
-      if (field.IsDrivable && varType.IsAssignableFrom(field.ValueType))
+      if (TypeUtils.MatchInterface(grabbedReference.GetType(), typeof(IDynamicVariable<>), out var matchedType))
       {
-        yield return new MenuItem(
-          label: DriveLabel("DynamicValueVariableDriver"),
-          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
-          color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => slot.CreateValueDriver(varType, dynVar.VariableName, field)
-        );
+        var dynVar = (IDynamicVariable)grabbedReference;
+        var varType = matchedType!.GenericTypeArguments[0];
+
+        if (field.IsDrivable && varType.IsAssignableFrom(field.ValueType))
+        {
+          yield return new MenuItem(
+            label: DriveLabel("DynamicValueVariableDriver"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => slot.CreateDynamicValueDriver(varType, dynVar.VariableName, field)
+          );
+        }
       }
     }
 
-    // element: source
-    // field: target
-    if (grabbedReference is IField source && field.IsDrivable)
     {
-      var target = field;
-      if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
+      if (grabbedReference is IValue source && field.IsDrivable)
       {
-        yield return new MenuItem(
-          label: DriveLabel(driverType!),
-          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
-          color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => slot.CreateConvertibleDriver(driverType!, source, target)
-        );
+        var target = field;
+        if (ValueDriverHelper.TryGetValueDriverType(source, out var driverType))
+        {
+          yield return new MenuItem(
+            label: DriveLabel("Driver"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => slot.CreateValueDriver(driverType!, source, target)
+          );
+        }
       }
+    }
 
-      if (typeManager.TryGetSwizzleDriverType(source, target, out var swizzleDriverType))
+    {
+      // element: source
+      // field: target
+      if (grabbedReference is IField source && field.IsDrivable)
       {
-        yield return new MenuItem(
-          label: DriveLabel(swizzleDriverType!),
-          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
-          color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => slot.CreateSwizzleDriver(swizzleDriverType!, source, target)
-        );
+        var target = field;
+        if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
+        {
+          yield return new MenuItem(
+            label: DriveLabel(driverType!),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => slot.CreateConvertibleDriver(driverType!, source, target)
+          );
+        }
+
+        if (typeManager.TryGetSwizzleDriverType(source, target, out var swizzleDriverType))
+        {
+          yield return new MenuItem(
+            label: DriveLabel(swizzleDriverType!),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => slot.CreateSwizzleDriver(swizzleDriverType!, source, target)
+          );
+        }
       }
     }
 
