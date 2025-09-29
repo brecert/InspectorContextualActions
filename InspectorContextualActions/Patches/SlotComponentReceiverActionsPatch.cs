@@ -124,12 +124,22 @@ class SlotComponentReceiverActionsPatch
           color: RadiantUI_Constants.Hero.CYAN,
           action: () => CreateDynamicReference(slot, syncRef)
         );
+        yield return new MenuItem(
+          label: CreateLabel("Dynamic Reference Variable"),
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () => CreateDynamicReferenceVariable(slot, syncRef)
+        );
         break;
       case IField field:
         yield return new MenuItem(
           label: CreateLabel("Dynamic Field"),
           color: RadiantUI_Constants.Hero.CYAN,
           action: () => CreateDynamicField(slot, field)
+        );
+        yield return new MenuItem(
+          label: CreateLabel("Dynamic Value Variable"),
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () => CreateDynamicValueVariable(slot, field)
         );
         break;
     }
@@ -148,5 +158,15 @@ class SlotComponentReceiverActionsPatch
   {
     var driver = (IDynamicVariable)slot.AttachComponent(typeof(DynamicField<>).MakeGenericType(field.ValueType));
     Traverse.Create(driver).Field("TargetField").Property("Target").SetValue(field);
+  }
+
+  static void CreateDynamicValueVariable(Slot slot, IField field)
+  {
+    InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicValueVariable(slot, field);
+  }
+
+  static void CreateDynamicReferenceVariable(Slot slot, ISyncRef syncRef)
+  {
+    InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicReferenceVariable(slot, syncRef);
   }
 }

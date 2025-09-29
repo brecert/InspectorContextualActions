@@ -27,7 +27,7 @@ public static class ReferenceCastHelper
   }
 
   static bool CanConvertTo(this ISyncRef source, ISyncRef target) =>
-    (bool)typeof(ReferenceCastHelper).GetMethod(nameof(CanConvertTo)).MakeGenericMethod(source.TargetType, target.TargetType).Invoke(null, [source.Target]);
+    (bool)typeof(ReferenceCastHelper).GetMethod(nameof(CanConvertTo))!.MakeGenericMethod(source.TargetType, target.TargetType).Invoke(null, [source.Target])!;
 
   static bool CanConvertTo<I, O>(I input) => input is O;
 }
