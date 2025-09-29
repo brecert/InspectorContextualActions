@@ -101,7 +101,7 @@ class FieldDriveReceiverActionsPatch
       if (grabbedReference is IField source && field.IsDrivable)
       {
         var target = field;
-        if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType))
+        if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType) && source.ValueType != target.ValueType)
         {
           yield return new MenuItem(
             label: DriveLabel(driverType!),
@@ -123,8 +123,23 @@ class FieldDriveReceiverActionsPatch
       }
     }
 
-    switch (grabbedReference)
     {
+      if (grabbedReference is IField<double> source && field is IField<float> target && target.IsDrivable)
+      {
+        yield return new MenuItem(
+            label: DriveLabel(nameof(DoubleToFloatCopy)),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () =>
+            {
+              slot.AttachComponent<DoubleToFloatCopy>(beforeAttach: c =>
+              {
+                c.Source.Target = source;
+                c.Target.Target = target;
+              });
+            }
+        );
+      }
     }
   }
 
