@@ -36,7 +36,7 @@ public static class ComponentSubtypePatches
         {
           var refType = type.GenericTypeArguments[0];
           InspectorContextualActionsMod.harmony.Patch(
-            original: AccessTools.DeclaredMethod(typeof(ReferenceDriveReceiver<>).MakeGenericType(refType), nameof(ReferenceDriveReceiver<Slot>.TryReceive)),
+            original: AccessTools.DeclaredMethod(typeof(ReferenceDriveReceiver<>).MakeGenericType(refType), nameof(ReferenceDriveReceiver<>.TryReceive)),
             postfix: ReferenceDriveReceiverActionsPatch_TryReceive_Postfix
           );
         }
@@ -44,7 +44,7 @@ public static class ComponentSubtypePatches
         {
           var valueType = type.GenericTypeArguments[0];
           InspectorContextualActionsMod.harmony.Patch(
-            original: AccessTools.DeclaredMethod(typeof(FieldDriveReceiver<>).MakeGenericType(valueType), nameof(FieldDriveReceiver<dummy>.TryReceive)),
+            original: AccessTools.DeclaredMethod(typeof(FieldDriveReceiver<>).MakeGenericType(valueType), nameof(FieldDriveReceiver<>.TryReceive)),
             postfix: FieldDriveReceiverActionsPatch_TryReceive_Postfix
           );
         }

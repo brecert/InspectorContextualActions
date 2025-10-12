@@ -60,7 +60,7 @@ class SlotComponentReceiverActionsPatch
   ];
 
   static IEnumerable<MenuItem> MenuItems(Slot slot, IWorldElement? element)
-  {
+  {    
     switch (element)
     {
       case ISyncRef<IAssetProvider<ITexture2D>> itex2d:
@@ -115,7 +115,6 @@ class SlotComponentReceiverActionsPatch
       }
     }
 
-
     switch (element)
     {
       case ISyncRef syncRef:
@@ -135,11 +134,6 @@ class SlotComponentReceiverActionsPatch
           label: CreateLabel("Dynamic Field"),
           color: RadiantUI_Constants.Hero.CYAN,
           action: () => CreateDynamicField(slot, field)
-        );
-        yield return new MenuItem(
-          label: CreateLabel("Dynamic Value Variable"),
-          color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => CreateDynamicValueVariable(slot, field)
         );
         break;
     }

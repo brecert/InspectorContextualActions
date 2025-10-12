@@ -10,12 +10,12 @@ public static class DynamicVariableHelper
 {
   public static bool CreateDynamicValueDriver(this Slot slot, Type type, string name, IField field) =>
     (bool)typeof(DynamicVariableHelper)
-      .GetGenericMethod("CreateValueDriver", BindingFlags.Static | BindingFlags.Public, type)
+      .GetGenericMethod(nameof(CreateDynamicValueDriver), BindingFlags.Static | BindingFlags.Public, type)
       .Invoke(null, [slot, name, field, true, true])!;
 
   public static bool CreateDynamicReferenceDriver(this Slot slot, Type type, string name, ISyncRef syncRef) =>
     (bool)typeof(DynamicVariableHelper)
-      .GetGenericMethod("CreateReferenceDriver", BindingFlags.Static | BindingFlags.Public, type)
+      .GetGenericMethod(nameof(CreateDynamicReferenceDriver), BindingFlags.Static | BindingFlags.Public, type)
       .Invoke(null, [slot, name, syncRef, true, true])!;
 
   public static bool CreateDynamicValueDriver<T>(this Slot slot, string name, IField<T> field, bool keepOrginalValue = true, bool persistent = true) =>
