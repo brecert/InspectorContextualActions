@@ -6,7 +6,6 @@ using FrooxEngine;
 using FrooxEngine.UIX;
 using HarmonyLib;
 using InspectorContextualActions.Utils;
-using Microsoft.VisualBasic;
 
 [HarmonyPatch]
 [HarmonyPatchCategory("SlotComponentReceiverActions")]
@@ -25,8 +24,6 @@ class SlotComponentReceiverActionsPatch
   {
     var slot = __instance.Target.Target;
     if (slot == null) return;
-
-    UniLog.Log(items.Join());
 
     var menuItems = GrabbableHelper.GetGrabbedReferences(items).SelectMany(grabbedReference => MenuItems(slot, grabbedReference)).ToArray();
 
