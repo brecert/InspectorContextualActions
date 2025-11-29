@@ -152,6 +152,30 @@ class SlotComponentReceiverActionsPatch
           );
         }
         break;
+      case SyncType syncType:
+        yield return new MenuItem(
+          label: CreateLabel("Dynamic Type Variable"),
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () =>
+          {
+            var typeVar = slot.AttachComponent<DynamicTypeVariable>();
+            typeVar.Value.Value = syncType.Value;
+            typeVar.Persistent = true;
+            typeVar.UpdateLinking();
+          }
+        );
+        yield return new MenuItem(
+          label: CreateLabel("Dynamic Type Field"),
+          color: RadiantUI_Constants.Hero.CYAN,
+          action: () =>
+          {
+            var typeVar = slot.AttachComponent<DynamicTypeField>();
+            typeVar.TargetField.Target = syncType;
+            typeVar.Persistent = true;
+            typeVar.UpdateLinking();
+          }
+        );
+        break;
       case IField field:
         // todo: handle type creation errors with a "TryMakeGenericType" helper.
         if (typeof(DynamicValueVariable<>).MakeGenericType(field.ValueType).IsValidGenericType(validForInstantiation: true))
