@@ -60,13 +60,10 @@ class FieldDriveReceiverActionsPatch
                 break;
               }
             }
-            else
-            {
-              if (receiver.TryReceive(items, grabber, data, in point))
-              {
-                break;
-              }
-            }
+          }
+          if (receiver.TryReceive(items, grabber, data, in point))
+          {
+            break;
           }
         }
       }

@@ -6,6 +6,7 @@ using FrooxEngine;
 using FrooxEngine.UIX;
 using HarmonyLib;
 using InspectorContextualActions.Utils;
+using Microsoft.VisualBasic;
 
 [HarmonyPatch]
 [HarmonyPatchCategory("SlotComponentReceiverActions")]
@@ -24,6 +25,8 @@ class SlotComponentReceiverActionsPatch
   {
     var slot = __instance.Target.Target;
     if (slot == null) return;
+
+    UniLog.Log(items.Join());
 
     var menuItems = GrabbableHelper.GetGrabbedReferences(items).SelectMany(grabbedReference => MenuItems(slot, grabbedReference)).ToArray();
 
@@ -60,7 +63,7 @@ class SlotComponentReceiverActionsPatch
   ];
 
   static IEnumerable<MenuItem> MenuItems(Slot slot, IWorldElement? element)
-  {    
+  {
     switch (element)
     {
       case ISyncRef<IAssetProvider<ITexture2D>> itex2d:
@@ -89,28 +92,36 @@ class SlotComponentReceiverActionsPatch
         if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(IField<>), out var matchedFieldType))
         {
           var valueType = matchedFieldType!.GenericTypeArguments[0];
-          yield return new MenuItem(
-            label: CreateLabel("ValueField"),
-            color: RadiantUI_Constants.Hero.CYAN,
-            action: () =>
-            {
-              var field = slot.AttachComponent(typeof(ValueField<>).MakeGenericType(valueType));
-              syncRef.Target = Traverse.Create(field).Field("Value").GetValue<IWorldElement>();
-            }
-          );
+          var componentType = typeof(ValueField<>).MakeGenericType(valueType);
+          if (componentType.IsValidGenericType(validForInstantiation: true))
+          {
+            yield return new MenuItem(
+              label: CreateLabel("ValueField"),
+              color: RadiantUI_Constants.Hero.CYAN,
+              action: () =>
+              {
+                var field = slot.AttachComponent(componentType);
+                syncRef.Target = Traverse.Create(field).Field("Value").GetValue<IWorldElement>();
+              }
+            );
+          }
         }
         else if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(ISyncRef<>), out var matchedSyncRefType))
         {
           var refType = matchedFieldType!.GenericTypeArguments[0];
-          yield return new MenuItem(
-            label: CreateLabel("ValueField"),
-            color: RadiantUI_Constants.Hero.CYAN,
-            action: () =>
-            {
-              var field = slot.AttachComponent(typeof(ReferenceField<>).MakeGenericType(refType));
-              syncRef.Target = Traverse.Create(field).Field("Reference").GetValue<IWorldElement>();
-            }
-          );
+          var componentType = typeof(ReferenceField<>).MakeGenericType(refType);
+          if (componentType.IsValidGenericType(validForInstantiation: true))
+          {
+            yield return new MenuItem(
+              label: CreateLabel("ValueField"),
+              color: RadiantUI_Constants.Hero.CYAN,
+              action: () =>
+              {
+                var field = slot.AttachComponent(componentType);
+                syncRef.Target = Traverse.Create(field).Field("Reference").GetValue<IWorldElement>();
+              }
+            );
+          }
         }
       }
     }
@@ -118,23 +129,66 @@ class SlotComponentReceiverActionsPatch
     switch (element)
     {
       case ISyncRef syncRef:
-        yield return new MenuItem(
-          label: CreateLabel("Dynamic Reference"),
-          color: RadiantUI_Constants.Hero.CYAN,
-          action: () => CreateDynamicReference(slot, syncRef)
-        );
-        yield return new MenuItem(
-          label: CreateLabel("Dynamic Reference Variable"),
-          color: RadiantUI_Constants.Hero.PURPLE,
-          action: () => CreateDynamicReferenceVariable(slot, syncRef)
-        );
+        // todo: this is bug prone, there is asymmetry between the creation and the check. unify them.
+        if (typeof(DynamicReferenceVariable<>).MakeGenericType(syncRef.TargetType).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Reference Variable"),
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => CreateDynamicReferenceVariable(slot, syncRef)
+          );
+        }
+        if (typeof(DynamicReference<>).MakeGenericType(syncRef.TargetType).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Reference"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () => CreateDynamicReference(slot, syncRef)
+          );
+        }
+        if (typeof(DynamicReferenceVariable<>).MakeGenericType(typeof(ISyncRef<>).MakeGenericType(syncRef.TargetType)).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Reference of ISyncRef"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () => CreateDynamicReferenceVariableOfISyncRef(slot, syncRef)
+          );
+        }
         break;
       case IField field:
-        yield return new MenuItem(
-          label: CreateLabel("Dynamic Field"),
-          color: RadiantUI_Constants.Hero.CYAN,
-          action: () => CreateDynamicField(slot, field)
-        );
+        // todo: handle type creation errors with a "TryMakeGenericType" helper.
+        if (typeof(DynamicValueVariable<>).MakeGenericType(field.ValueType).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Value Variable"),
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => CreateDynamicValueVariable(slot, field)
+          );
+        }
+        if (typeof(DynamicField<>).MakeGenericType(field.ValueType).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Field"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () => CreateDynamicField(slot, field)
+          );
+        }
+        if (typeof(DynamicReferenceVariable<>).MakeGenericType(typeof(IField<>).MakeGenericType(field.ValueType)).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Reference of IField"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () => CreateDynamicReferenceVariableOfIField(slot, field)
+          );
+        }
+        if (typeof(DynamicReferenceVariable<>).MakeGenericType(typeof(IValue<>).MakeGenericType(field.ValueType)).IsValidGenericType(validForInstantiation: true))
+        {
+          yield return new MenuItem(
+            label: CreateLabel("Dynamic Reference of IValue"),
+            color: RadiantUI_Constants.Hero.CYAN,
+            action: () => CreateDynamicReferenceVariableOfIValue(slot, field)
+          );
+        }
         break;
     }
   }
@@ -162,5 +216,20 @@ class SlotComponentReceiverActionsPatch
   static void CreateDynamicReferenceVariable(Slot slot, ISyncRef syncRef)
   {
     InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicReferenceVariable(slot, syncRef);
+  }
+
+  static void CreateDynamicReferenceVariableOfISyncRef(Slot slot, ISyncRef syncRef)
+  {
+    InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicReferenceVariableOfISyncRef(slot, syncRef);
+  }
+
+  static void CreateDynamicReferenceVariableOfIField(Slot slot, IField field)
+  {
+    InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicReferenceVariableOfIField(slot, field);
+  }
+
+  static void CreateDynamicReferenceVariableOfIValue(Slot slot, IField field)
+  {
+    InspectorContextualActions.Utils.DynamicVariableHelper.CreateDynamicReferenceVariableOfIValue(slot, field);
   }
 }

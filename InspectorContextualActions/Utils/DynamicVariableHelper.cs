@@ -66,4 +66,20 @@ public static class DynamicVariableHelper
       .GetGenericMethod(nameof(FrooxEngine.DynamicVariableHelper.CreateVariable), BindingFlags.Static | BindingFlags.Public, syncRef.TargetType)
       .Invoke(null, [slot, null, syncRef.Target, true])!;
 
+  public static bool CreateDynamicReferenceVariableOfISyncRef(Slot slot, ISyncRef syncRef) =>
+    (bool)typeof(FrooxEngine.DynamicVariableHelper)
+      .GetGenericMethod(nameof(FrooxEngine.DynamicVariableHelper.CreateVariable), BindingFlags.Static | BindingFlags.Public, typeof(ISyncRef<>).MakeGenericType(syncRef.TargetType))
+      .Invoke(null, [slot, null, syncRef, true])!;
+
+
+  public static bool CreateDynamicReferenceVariableOfIField(Slot slot, IField field) =>
+    (bool)typeof(FrooxEngine.DynamicVariableHelper)
+      .GetGenericMethod(nameof(FrooxEngine.DynamicVariableHelper.CreateVariable), BindingFlags.Static | BindingFlags.Public, typeof(IField<>).MakeGenericType(field.ValueType))
+      .Invoke(null, [slot, null, field, true])!;
+
+  public static bool CreateDynamicReferenceVariableOfIValue(Slot slot, IField field) =>
+    (bool)typeof(FrooxEngine.DynamicVariableHelper)
+      .GetGenericMethod(nameof(FrooxEngine.DynamicVariableHelper.CreateVariable), BindingFlags.Static | BindingFlags.Public, typeof(IValue<>).MakeGenericType(field.ValueType))
+      .Invoke(null, [slot, null, field, true])!;
+
 }
