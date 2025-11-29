@@ -114,7 +114,7 @@ class FieldDriveReceiverActionsPatch
     }
 
     {
-      if (grabbedReference is IValue source && field.IsDrivable)
+      if (grabbedReference is IValue source && field.IsDrivable && source.ValueType.IsAssignableFrom(field.ValueType))
       {
         var target = field;
         if (ValueDriverHelper.TryGetValueDriverType(source, out var driverType))
