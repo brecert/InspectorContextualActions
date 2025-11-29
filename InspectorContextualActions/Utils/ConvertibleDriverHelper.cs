@@ -29,7 +29,7 @@ public static class ConvertibleDriverHelper
     if (ConvertibleDriversTypeMap.TryGetValue(target.ValueType, out var driverType))
     {
       var convertibleType = driverType.MakeGenericType(source.ValueType);
-      if (Traverse.Create(convertibleType).Property<bool>("IsValidGenericType").Value)
+      if (convertibleType.IsValidGenericType(validForInstantiation: true))
       {
         type = convertibleType;
         return true;

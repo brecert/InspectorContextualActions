@@ -27,7 +27,6 @@ class ComponentSelectorTypeReceiverPatch
   {
     if (____genericType.Value == null || !____genericType.Value.IsGenericType) return;
 
-
     var typeArguments = ____genericType.Value.GetGenericArguments();
 
     foreach (var (field, type) in ____customGenericArguments.Zip(typeArguments, (a, b) => (a, b)))
@@ -52,5 +51,4 @@ class ComponentSelectorTypeReceiverPatch
       }
     }
   }
-
 }
