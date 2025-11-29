@@ -41,7 +41,6 @@ class FieldDriveReceiverActionsPatch
 
         foreach (var receiver in receivers)
         {
-          UniLog.Log($"FOUND {receiver}");
           if (receiver.GetType() is { IsGenericType: true } type)
           {
             var genericType = type.GetGenericTypeDefinition();
@@ -50,7 +49,6 @@ class FieldDriveReceiverActionsPatch
               receiver.TryReceive(items, grabber, data, in point);
               if (FieldDriveReceiver_TryReceive((Component)receiver, items, grabber, data, in point) == IterationState.Stop)
               {
-                UniLog.Log($"BREAK {receiver}");
                 break;
               }
             }
@@ -59,7 +57,6 @@ class FieldDriveReceiverActionsPatch
               receiver.TryReceive(items, grabber, data, in point);
               if (ReferenceDriveReceiver_TryReceive((Component)receiver, items, grabber, data, in point) == IterationState.Stop)
               {
-                UniLog.Log($"BREAK {receiver}");
                 break;
               }
             }
