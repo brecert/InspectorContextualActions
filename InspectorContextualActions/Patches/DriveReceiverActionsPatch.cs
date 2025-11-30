@@ -151,6 +151,20 @@ class FieldDriveReceiverActionsPatch
             action: () => slot.CreateSwizzleDriver(swizzleDriverType!, source, target)
           );
         }
+
+        if (source is not IField<RefID> && target is IField<string> targetString)
+        {
+          var componentType = typeof(ValueTextFormatDriver<>).MakeGenericType(source.ValueType);
+          if (componentType.IsValidGenericType(validForInstantiation: true))
+          {
+            yield return new MenuItem(
+              label: DriveLabel("Text Format"),
+              icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+              color: RadiantUI_Constants.Hero.PURPLE,
+              action: () => slot.AttatchValueTextFormatDriver(source, targetString, "{0}")
+            );
+          }
+        }
       }
     }
 
