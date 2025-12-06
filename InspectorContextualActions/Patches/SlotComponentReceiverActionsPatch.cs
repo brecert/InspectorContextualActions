@@ -18,6 +18,7 @@ class SlotComponentReceiverActionsPatch
     public Action Action => action;
   };
 
+
   [HarmonyPostfix]
   [HarmonyPatch(typeof(SlotComponentReceiver), nameof(SlotComponentReceiver.TryReceive))]
   static void TryReceiveActions(SlotComponentReceiver __instance, IEnumerable<IGrabbable> items, Component grabber, Canvas.InteractionData eventData, in float3 globalPoint, ref bool __result)
@@ -110,7 +111,7 @@ class SlotComponentReceiverActionsPatch
           if (componentType.IsValidGenericType(validForInstantiation: true))
           {
             yield return new MenuItem(
-              label: CreateLabel("ValueField"),
+              label: CreateLabel("ReferenceField"),
               color: RadiantUI_Constants.Hero.CYAN,
               action: () =>
               {

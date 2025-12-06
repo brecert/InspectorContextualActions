@@ -91,6 +91,7 @@ class FieldDriveReceiverActionsPatch
   {
     var slot = field.FindNearestParent<Slot>();
     var typeManager = grabbedReference.World.Types;
+    if (!field.IsDrivable) yield break;
 
     {
       if (TypeUtils.MatchInterface(grabbedReference.GetType(), typeof(IDynamicVariable<>), out var matchedType))
@@ -98,7 +99,7 @@ class FieldDriveReceiverActionsPatch
         var dynVar = (IDynamicVariable)grabbedReference;
         var varType = matchedType!.GenericTypeArguments[0];
 
-        if (field.IsDrivable && varType.IsAssignableFrom(field.ValueType))
+        if (varType.IsAssignableFrom(field.ValueType))
         {
           yield return new MenuItem(
             label: DriveLabel("DynamicValueVariableDriver"),
@@ -111,7 +112,7 @@ class FieldDriveReceiverActionsPatch
     }
 
     {
-      if (grabbedReference is IValue source && field.IsDrivable && source.ValueType.IsAssignableFrom(field.ValueType))
+      if (grabbedReference is IValue source && source.ValueType.IsAssignableFrom(field.ValueType))
       {
         var target = field;
         if (ValueDriverHelper.TryGetValueDriverType(source, out var driverType))
@@ -129,7 +130,7 @@ class FieldDriveReceiverActionsPatch
     {
       // element: source
       // field: target
-      if (grabbedReference is IField source && field.IsDrivable)
+      if (grabbedReference is IField source)
       {
         var target = field;
         if (ConvertibleDriverHelper.TryGetConvertibleDriverType(source, target, out var driverType) && source.ValueType != field.ValueType)
@@ -165,11 +166,21 @@ class FieldDriveReceiverActionsPatch
             );
           }
         }
+
+        if (source is IField<float> floatSource && target.IsValidValueGradientDriverTarget())
+        {
+          yield return new MenuItem(
+            label: DriveLabel("Value Gradient"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () => slot.AttatchValueGradientDriver(target)
+          );
+        }
       }
     }
 
     {
-      if (grabbedReference is IField<double> source && field is IField<float> target && target.IsDrivable)
+      if (grabbedReference is IField<double> source && field is IField<float> target)
       {
         yield return new MenuItem(
             label: DriveLabel(nameof(DoubleToFloatCopy)),
@@ -202,13 +213,14 @@ class FieldDriveReceiverActionsPatch
   static IEnumerable<MenuItem> SyncRefMenuItems(ISyncRef syncRef, IWorldElement droppedElement)
   {
     var slot = syncRef.FindNearestParent<Slot>();
+    if (!syncRef.IsDrivable) yield break;
 
     if (TypeUtils.MatchInterface(droppedElement.GetType(), typeof(IDynamicVariable<>), out var matchedType))
     {
       var dynVar = (IDynamicVariable)droppedElement;
       var varType = matchedType!.GenericTypeArguments[0];
 
-      if (syncRef.IsDrivable && varType.IsAssignableFrom(syncRef.TargetType))
+      if (varType.IsAssignableFrom(syncRef.TargetType))
       {
         yield return new MenuItem(
           label: "Inspector.Fields.Drive".AsLocaleKey(format: $"{{0}} <size=50%>(DynamicReferenceVariableDriver)</size>"),
@@ -219,7 +231,7 @@ class FieldDriveReceiverActionsPatch
       }
     }
 
-    if (droppedElement is ISyncRef source && syncRef.IsDrivable)
+    if (droppedElement is ISyncRef source)
     {
       var target = syncRef;
 
