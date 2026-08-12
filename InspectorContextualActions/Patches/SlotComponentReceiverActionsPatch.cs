@@ -90,11 +90,11 @@ class SlotComponentReceiverActionsPatch
         if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(IField<>), out var matchedFieldType))
         {
           var valueType = matchedFieldType!.GenericTypeArguments[0];
-          var componentType = typeof(ValueField<>).MakeGenericType(valueType);
+          var componentType = typeof(ValueTag<>).MakeGenericType(valueType);
           if (componentType.IsValidGenericType(validForInstantiation: true))
           {
             yield return new MenuItem(
-              label: CreateLabel("ValueField"),
+              label: CreateLabel("ValueTag"),
               color: RadiantUI_Constants.Hero.CYAN,
               action: () =>
               {
@@ -107,11 +107,11 @@ class SlotComponentReceiverActionsPatch
         else if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(ISyncRef<>), out var matchedSyncRefType))
         {
           var refType = matchedFieldType!.GenericTypeArguments[0];
-          var componentType = typeof(ReferenceField<>).MakeGenericType(refType);
+          var componentType = typeof(ReferenceTag<>).MakeGenericType(refType);
           if (componentType.IsValidGenericType(validForInstantiation: true))
           {
             yield return new MenuItem(
-              label: CreateLabel("ReferenceField"),
+              label: CreateLabel("ReferenceTag"),
               color: RadiantUI_Constants.Hero.CYAN,
               action: () =>
               {
