@@ -120,6 +120,20 @@ class FieldDriveReceiverActionsPatch
               slot.CreateDynamicValueDriver(varType, dynVar.VariableName, (IField)((dynamic)gradientDriver).Progress);
             });
         }
+        if (varType == typeof(bool) && field.IsValidBooleanValueDriverTarget())
+        {
+          yield return new MenuItem(
+            label: DriveLabel("BooleanValueDriver"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () =>
+            {
+              var booleanValueDriver = slot.AttachBooleanValueDriver(field);
+              slot.CreateDynamicValueDriver(varType, dynVar.VariableName, (IField)((dynamic)booleanValueDriver).State);
+            }
+          );
+        }
+
       }
     }
 
@@ -193,7 +207,6 @@ class FieldDriveReceiverActionsPatch
                 c.Source.Target = boolSource;
                 c.Target.Target = (Sync<bool>)((dynamic)boolDriver).State;
               });
-
             }
           );
         }
