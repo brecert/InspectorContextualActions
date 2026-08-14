@@ -179,6 +179,25 @@ class FieldDriveReceiverActionsPatch
           }
         }
 
+        if (source is IField<bool> boolSource && target.IsValidBooleanValueDriverTarget())
+        {
+          yield return new MenuItem(
+            label: DriveLabel("BooleanValueDriver"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () =>
+            {
+              var boolDriver = slot.AttachBooleanValueDriver(target);
+              slot.AttachComponent<ValueCopy<bool>>(beforeAttach: c =>
+              {
+                c.Source.Target = boolSource;
+                c.Target.Target = (Sync<bool>)((dynamic)boolDriver).State;
+              });
+
+            }
+          );
+        }
+
         if (source is IField<float> floatSource && target.IsValidValueGradientDriverTarget())
         {
           yield return new MenuItem(
