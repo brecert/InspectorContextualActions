@@ -26,7 +26,7 @@ When dropping a held reference on an inspector panel this will typically show th
 
 This mod adds some additional actions that follow a similar pattern that should be read in the following format.
 
-slot receives `DroppedType` for `AttatchedComponentType`
+slot receives `DroppedType` for `AttachedComponentType`
 
 - slot receives `IAssetProvider<ITexture2D>` for
   - `GridTexture`

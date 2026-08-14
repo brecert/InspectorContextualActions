@@ -11,11 +11,11 @@ public static class ValueGradientDriverHelper
     typeof(ValueGradientDriver<>).MakeGenericType(target.ValueType).IsValidGenericType(validForInstantiation: true);
 
   public static Component AttachValueGradientDriver(this Slot slot, IField target, bool keepOriginalValue = true) =>
-    typeof(ValueGradientDriverHelper)
-      .GetGenericMethod(nameof(AttatchValueTextFormatDriver), BindingFlags.Static | BindingFlags.Public, target.ValueType)
-      .Invoke(null, [slot, target, keepOriginalValue]) as Component;
+    (Component)typeof(ValueGradientDriverHelper)
+      .GetGenericMethod(nameof(AttachValueTextFormatDriver), BindingFlags.Static | BindingFlags.Public, target.ValueType)
+      .Invoke(null, [slot, target, keepOriginalValue])!;
 
-  public static ValueGradientDriver<T> AttatchValueTextFormatDriver<T>(this Slot slot, IField<T> valueTarget, bool keepOriginalValue = true)
+  public static ValueGradientDriver<T> AttachValueTextFormatDriver<T>(this Slot slot, IField<T> valueTarget, bool keepOriginalValue = true)
   {
     var originalValue = valueTarget.Value;
     var driver = slot.AttachComponent<ValueGradientDriver<T>>();

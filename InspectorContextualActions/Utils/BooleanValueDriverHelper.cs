@@ -11,9 +11,9 @@ public static class BooleanValueDriverHelper
     typeof(BooleanValueDriver<>).MakeGenericType(target.ValueType).IsValidGenericType(validForInstantiation: true);
 
   public static Component AttachBooleanValueDriver(this Slot slot, IField target, bool keepOriginalValue = true) =>
-    typeof(BooleanValueDriverHelper)
+    (Component)typeof(BooleanValueDriverHelper)
       .GetGenericMethod(nameof(AttachBooleanValueDriver), BindingFlags.Static | BindingFlags.Public, target.ValueType)
-      .Invoke(null, [slot, target, keepOriginalValue]) as Component;
+      .Invoke(null, [slot, target, keepOriginalValue])!;
 
   public static BooleanValueDriver<T> AttachBooleanValueDriver<T>(this Slot slot, IField<T> valueTarget, bool keepOriginalValue = true)
   {

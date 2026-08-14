@@ -188,7 +188,7 @@ class FieldDriveReceiverActionsPatch
               label: DriveLabel("Text Format"),
               icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
               color: RadiantUI_Constants.Hero.PURPLE,
-              action: () => slot.AttatchValueTextFormatDriver(source, targetString, "{0}")
+              action: () => slot.AttachValueTextFormatDriver(source, targetString, "{0}")
             );
           }
         }
