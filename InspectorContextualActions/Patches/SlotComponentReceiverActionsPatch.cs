@@ -90,18 +90,35 @@ class SlotComponentReceiverActionsPatch
         if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(IField<>), out var matchedFieldType))
         {
           var valueType = matchedFieldType!.GenericTypeArguments[0];
-          var componentType = typeof(ValueTag<>).MakeGenericType(valueType);
-          if (componentType.IsValidGenericType(validForInstantiation: true))
           {
-            yield return new MenuItem(
-              label: CreateLabel("ValueTag"),
-              color: RadiantUI_Constants.Hero.CYAN,
-              action: () =>
-              {
-                var field = slot.AttachComponent(componentType);
-                syncRef.Target = Traverse.Create(field).Field("Value").GetValue<IWorldElement>();
-              }
-            );
+            var componentType = typeof(ValueTag<>).MakeGenericType(valueType);
+            if (componentType.IsValidGenericType(validForInstantiation: true))
+            {
+              yield return new MenuItem(
+                label: CreateLabel("ValueTag"),
+                color: RadiantUI_Constants.Hero.CYAN,
+                action: () =>
+                {
+                  var field = slot.AttachComponent(componentType);
+                  syncRef.Target = Traverse.Create(field).Field("Value").GetValue<IWorldElement>();
+                }
+              );
+            }
+          }
+          {
+            var componentType = typeof(SmoothValue<>).MakeGenericType(valueType);
+            if (componentType.IsValidGenericType(validForInstantiation: true))
+            {
+              yield return new MenuItem(
+                label: CreateLabel("SmoothValue"),
+                color: RadiantUI_Constants.Hero.CYAN,
+                action: () =>
+                {
+                  var field = slot.AttachComponent(componentType);
+                  syncRef.Target = Traverse.Create(field).Field("TargetValue").GetValue<IWorldElement>();
+                }
+              );
+            }
           }
         }
         else if (TypeUtils.MatchInterface(syncRef.TargetType, typeof(ISyncRef<>), out var matchedSyncRefType))
