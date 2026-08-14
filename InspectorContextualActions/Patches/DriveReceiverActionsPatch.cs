@@ -108,6 +108,18 @@ class FieldDriveReceiverActionsPatch
             action: () => slot.CreateDynamicValueDriver(varType, dynVar.VariableName, field)
           );
         }
+        if (varType == typeof(float))
+        {
+          yield return new MenuItem(
+            label: DriveLabel("DynamicValueVariableDriver ValueGradientDriver"),
+            icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+            color: RadiantUI_Constants.Hero.PURPLE,
+            action: () =>
+            {
+              var gradientDriver = slot.AttachValueGradientDriver(field);
+              slot.CreateDynamicValueDriver(varType, dynVar.VariableName, (IField)((dynamic)gradientDriver).Progress);
+            });
+        }
       }
     }
 
@@ -173,7 +185,7 @@ class FieldDriveReceiverActionsPatch
             label: DriveLabel("Value Gradient"),
             icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
             color: RadiantUI_Constants.Hero.PURPLE,
-            action: () => slot.AttatchValueGradientDriver(target)
+            action: () => { slot.AttachValueGradientDriver(target); }
           );
         }
       }
