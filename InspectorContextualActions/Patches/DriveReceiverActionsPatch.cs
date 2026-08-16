@@ -169,6 +169,19 @@ class FieldDriveReceiverActionsPatch
           );
         }
 
+        if (LinearMapperHelper.TryGetLinearMapperTypes(source, target, out var linearMapperTypes))
+        {
+          foreach (var linearMapperType in linearMapperTypes)
+          {
+            yield return new MenuItem(
+              label: DriveLabel(driverType!),
+              icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+              color: RadiantUI_Constants.Hero.PURPLE,
+              action: () => slot.CreateLinearMapper(linearMapperType!, source, target)
+            );
+          }
+        }
+
         if (typeManager.TryGetSwizzleDriverType(source.ValueType, field.ValueType, out var swizzleDriverType))
         {
           yield return new MenuItem(
