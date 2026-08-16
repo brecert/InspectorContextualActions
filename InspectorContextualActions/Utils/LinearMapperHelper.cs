@@ -21,7 +21,7 @@ public static class LinearMapperHelper
     { typeof(colorX), [typeof(LinearColorMapper)] },
   };
 
-  public static bool TryGetLinearMapperTypes(IField source, IField target, [NotNullWhen(true)] out IEnumerable<Type>? types) =>
+  public static bool TryGetLinearMapperTypes(IField target, [NotNullWhen(true)] out IEnumerable<Type>? types) =>
     LinearMapperTypes.TryGetValue(target.ValueType, out types);
 
   public static Component CreateLinearMapper(this Slot slot, Type type, IField source, IField target)

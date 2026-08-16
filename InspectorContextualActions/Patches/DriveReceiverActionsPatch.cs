@@ -169,12 +169,12 @@ class FieldDriveReceiverActionsPatch
           );
         }
 
-        if (LinearMapperHelper.TryGetLinearMapperTypes(source, target, out var linearMapperTypes))
+        if (source.ValueType == typeof(float) && LinearMapperHelper.TryGetLinearMapperTypes(target, out var linearMapperTypes))
         {
           foreach (var linearMapperType in linearMapperTypes)
           {
             yield return new MenuItem(
-              label: DriveLabel(driverType!),
+              label: DriveLabel(linearMapperType!),
               icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
               color: RadiantUI_Constants.Hero.PURPLE,
               action: () => slot.CreateLinearMapper(linearMapperType!, source, target)
