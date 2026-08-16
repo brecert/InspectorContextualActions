@@ -93,6 +93,28 @@ class FieldDriveReceiverActionsPatch
     var typeManager = grabbedReference.World.Types;
     if (!field.IsDrivable) yield break;
 
+    if (grabbedReference == field)
+    {
+      yield return new MenuItem(
+        label: DriveLabel("UserOverride"),
+        icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+        color: RadiantUI_Constants.Hero.PURPLE,
+        action: () => _ = field is SyncRef syncRef
+          ? slot.CreateReferenceUserOverride(syncRef)
+          : slot.CreateValueUserOverride(field)
+      );
+
+      if (field.IsValidNumericValueUserOverrideGatherTarget())
+      {
+        yield return new MenuItem(
+          label: DriveLabel("NumericUserOverrideGather"),
+          icon: OfficialAssets.Graphics.Icons.ProtoFlux.Drive,
+          color: RadiantUI_Constants.Hero.PURPLE,
+          action: () => slot.CreateNumericValueUserOverrideGather(field)
+        );
+      }
+    }
+
     {
       if (TypeUtils.MatchInterface(grabbedReference.GetType(), typeof(IDynamicVariable<>), out var matchedType))
       {
